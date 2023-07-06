@@ -1,0 +1,58 @@
+<style>
+  body {
+    padding: 20px;
+  }
+
+  button {
+    padding: 10px 20px;
+    background-color: #0077c2;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+
+  .error {
+    color: red;
+    font-weight: bold;
+  }
+</style>
+<h1>Export Frame as Zip</h1>
+<p>Select a frame to export and click the Export button.</p>
+<button id="exportButton">Export</button>
+<div id="errorContainer"></div>
+<script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.7.1/dist/jszip.min.js"></script>
+
+<script>
+  //creates a variable that references the button in your UI
+  const button = document.getElementById("exportButton");
+
+  //Takes input values and shares them with your Figma code
+  function whenButtonIsClicked() {
+    //Sends your values to your Figma code. * is the code's worker address
+    parent.postMessage({ pluginMessage: { type: "export" } }, "*");
+  }
+
+  function downloadZip(zip, frameName) {
+    zip.generateAsync({ type: "blob" }).then(function (content) {
+      saveAs(content, `${frameName}.zip`);
+    });
+  }
+
+  //listens for messages from your Figma code
+  window.onmessage = (event) => {
+    const { type, html,frameName} = event.data.pluginMessage;
+    if (type === "error") {
+      document.getElementById("errorContainer").innerHTML = `<p class="error">${message}</p>`;
+    } else if (type === "success") {
+      const zip = new JSZip();
+      zip.file("index.html", html);
+      downloadZip(zip,frameName);
+    }
+  };
+
+  //creates a listener that will activate whenever the button is clicked
+  button.addEventListener("click", whenButtonIsClicked);
+</script>

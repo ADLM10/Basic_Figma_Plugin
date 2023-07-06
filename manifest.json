@@ -1,0 +1,13 @@
+{
+  "name": "assignment-plugin",
+  "id": "1226565113329362675",
+  "api": "1.0.0",
+  "main": "code.js",
+  "capabilities": [],
+  "enableProposedApi": false,
+  "editorType": [
+    "figma",
+    "figjam"
+  ],
+  "ui": "ui.html"
+}
